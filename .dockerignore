@@ -1,0 +1,19 @@
+# Never bake secrets or generated data into the image
+.env
+.venv/
+# .git/ IS copied: DVC needs the git repository to resolve data.dvc
+.idea/
+.vscode/
+__pycache__/
+.ipynb_checkpoints/
+
+# Legacy notebooks and their outputs are not part of the training image
+*.ipynb
+Figures/
+results/
+resultat/
+
+# Mounted at runtime instead
+data/
+artifact/
+mlruns/

@@ -1,0 +1,43 @@
+# config.yaml — unique source of truth for train.py
+#   python train.py
+#   python train.py --config other.yaml
+# Paths are relative to the project root.
+
+seed: 42
+
+# 1% of train AND test, sampled with the seed -> fast smoke run.
+# 1.0 = all data. Must be in (0, 1].
+data_fraction: 0.01
+
+data:
+  train_csv: data/train.csv
+  test_csv: data/test.csv
+  text_columns: [Title, Description]
+  label_column: "Class Index"
+  num_classes: 4
+
+model:
+  # the only model: sklearn TF-IDF + LogisticRegression
+  name: logreg
+  max_features: 20000
+  min_df: 2
+  ngram_range: [1, 2]
+  C: 1.0
+  max_iter: 1000
+
+mlflow:
+  experiment_name: AG_News_Classification_sklearn
+  artifact_root: s3://MLTP-dvc/mlflow-artifacts
+  run_name: null
+
+artifacts:
+  dir: artifact
+  model_file: model.joblib
+  confusion_matrix: confusion_matrix.png
+
+hf:
+  upload: true
+  endpoint_url: https://s3.hf.co/moussll
+  bucket: MLTP-dvc
+  artifact_prefix: mlops-artifacts
+  region: us-east-1

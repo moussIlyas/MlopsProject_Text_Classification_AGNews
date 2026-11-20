@@ -1,0 +1,30 @@
+name: mlops-runner
+
+services:
+  runner:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: mlops-runner-python:local
+    container_name: mlops-runner
+    restart: unless-stopped
+
+    # REPO_URL, ACCESS_TOKEN, RUNNER_NAME, RUNNER_LABELS come from runner/.env
+    env_file:
+      - .env
+    environment:
+      RUNNER_SCOPE: repo
+      RUNNER_WORKDIR: /_work
+      RUN_AS_ROOT: "true"
+      # Remove the PAT from the environment before job steps start.
+      UNSET_CONFIG_VARS: "true"
+
+    # Fedora SELinux: keep bind mounts working if you add some later.
+    security_opt:
+      - label=disable
+
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"

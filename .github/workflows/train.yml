@@ -1,0 +1,76 @@
+name: Train AG News (self-hosted)
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: train-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  train:
+    name: sklearn training (1% data) on self-hosted runner
+    # "self-hosted", "linux", "x64" are added automatically; "python" comes
+    # from RUNNER_LABELS in runner/.env
+    runs-on: [self-hosted, linux, x64, python]
+    timeout-minutes: 30
+
+    env:
+      UV_PYTHON: "3.13"
+      MLFLOW_DISABLE_AGENT_HINT: "1"
+      # Neon (MLflow metadata)
+      NEON_PGUSER: ${{ secrets.NEON_PGUSER }}
+      NEON_PGPASSWORD: ${{ secrets.NEON_PGPASSWORD }}
+      NEON_PGHOST: ${{ secrets.NEON_PGHOST }}
+      NEON_PGPORT: ${{ secrets.NEON_PGPORT }}
+      NEON_PGDATABASE: ${{ secrets.NEON_PGDATABASE }}
+      NEON_SSLMODE: ${{ secrets.NEON_SSLMODE }}
+      # HF S3 gateway (DVC pull + explicit artifact upload)
+      HF_S3_ACCESS_KEY: ${{ secrets.HF_S3_ACCESS_KEY }}
+      HF_S3_SECRET_KEY: ${{ secrets.HF_S3_SECRET_KEY }}
+      AWS_ACCESS_KEY_ID: ${{ secrets.HF_S3_ACCESS_KEY }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.HF_S3_SECRET_KEY }}
+      AWS_DEFAULT_REGION: us-east-1
+      AWS_REGION: us-east-1
+      # MLflow's boto3 client must use the HF endpoint, not real AWS S3
+      MLFLOW_S3_ENDPOINT_URL: https://s3.hf.co/moussll
+
+    steps:
+      - name: Checkout (full history for DVC)
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Show runner
+        run: |
+          echo "Runner: ${RUNNER_NAME:-unknown}"
+          echo "OS    : ${RUNNER_OS:-unknown}"
+          python3 --version || true
+          uv --version
+
+      - name: Install dependencies from lockfile
+        run: |
+          uv python install 3.13
+          uv sync --frozen
+
+      - name: Pull dataset from HF bucket (DVC)
+        run: uv run dvc pull
+
+      - name: Train and publish artifacts
+        run: uv run python train.py
+
+      - name: List local artifacts
+        run: ls -lh artifact/
+
+      - name: Keep a copy as GitHub artifact (optional backup)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: model-artifacts
+          path: artifact/
+          if-no-files-found: warn
