@@ -19,9 +19,13 @@ services:
       # Remove the PAT from the environment before job steps start.
       UNSET_CONFIG_VARS: "true"
 
-    # Fedora SELinux: keep bind mounts working if you add some later.
+    # Fedora SELinux: keep bind mounts working.
     security_opt:
       - label=disable
+
+    # Needed by the workflow step that builds/pushes the model image.
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
 
     logging:
       driver: json-file

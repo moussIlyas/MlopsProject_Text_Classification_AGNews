@@ -1,0 +1,4 @@
+# Inference-only dependencies, pinned to the exact versions of uv.lock.
+scikit-learn==1.9.1
+joblib==1.6.0
+numpy==2.5.3
