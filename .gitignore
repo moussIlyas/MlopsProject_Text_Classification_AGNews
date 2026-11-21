@@ -1,17 +1,44 @@
-.venv/
+# --- Secrets / environnements (jamais versionnes) ---
 .env
+.env.*
+!.env.example
+!.env.exemple
+.venv/
+venv/
+
+# --- Donnees et sorties generees (vraies copies dans le bucket HF) ---
 /data
-
-# Notebooks are no longer used (kept in git history only)
-*.ipynb
-
-# Generated outputs (the real copies live on the HF bucket)
+/artifact/
+/mlruns/
 /Figures/
 /results/
 /resultat/
-/mlruns/
-/artifact/
+*.joblib
+*.pt
+*.pkl
 
-# Python bytecode
+# --- Notebooks : experiences legacy, gardees dans l'historique git ---
+*.ipynb
+.ipynb_checkpoints/
+
+# --- IDE / OS ---
+.idea/
+*.iml
+.vscode/
+.DS_Store
+Thumbs.db
+
+# --- Python ---
 __pycache__/
 *.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# --- Runner : seul .env est ignore (voir regle .env ci-dessus).
+# Le reste de runner/ reste versionne : il definit le runner self-hosted.
+runner/_work/
+runner/.runner
+runner/.credentials
