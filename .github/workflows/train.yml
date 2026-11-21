@@ -7,6 +7,8 @@ on:
 
 permissions:
   contents: read
+  issues: write          # CML commit comments
+  pull-requests: write   # CML PR comments (if we add PR triggers later)
 
 concurrency:
   group: train-${{ github.ref }}
@@ -69,6 +71,50 @@ jobs:
 
       - name: List local artifacts
         run: ls -lh artifacts/
+
+      - name: Setup CML
+        uses: iterative/setup-cml@v2
+
+      - name: Publish CML report
+        env:
+          REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          metrics = json.loads(Path("artifacts/metrics.json").read_text())
+          info = json.loads(Path("artifacts/run_info.json").read_text())
+
+          report = f"""## 🏋️ AG News Training Report
+
+          **Date (UTC)**: {info['date']}
+
+          ### Metrics
+          | key | value |
+          | --- | --- |
+          | accuracy | {metrics['accuracy']:.4f} |
+          | data_fraction | {metrics['data_fraction']} |
+          | seed | {metrics['seed']} |
+
+          ### Versions
+          | package | version |
+          | --- | --- |
+          | python | {info['versions']['python']} |
+          | scikit-learn | {info['versions']['scikit-learn']} |
+          | joblib | {info['versions']['joblib']} |
+          | numpy | {info['versions']['numpy']} |
+          | pandas | {info['versions']['pandas']} |
+
+          ### Confusion Matrix
+          ![confusion matrix](./artifacts/confusion_matrix.png)
+
+          ### Full details
+          See `artifacts/run_info.json` for the complete configuration and classification report.
+          """
+          Path("report.md").write_text(report)
+          PY
+          cml comment create report.md
 
       - name: Build and push packaged model image (Docker Hub)
         # Option C: model.joblib + artifacts are baked into a versioned image.
