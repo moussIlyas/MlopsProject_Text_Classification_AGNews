@@ -1,6 +1,6 @@
-# config.yaml — unique source of truth for train.py
+# config/train.yaml — unique source of truth for train.py
 #   python train.py
-#   python train.py --config other.yaml
+#   python train.py --config config/train.yaml
 # Paths are relative to the project root.
 
 seed: 42
@@ -31,7 +31,7 @@ mlflow:
   run_name: null
 
 artifacts:
-  dir: artifact
+  dir: artifacts
   model_file: model.joblib
   confusion_matrix: confusion_matrix.png
 

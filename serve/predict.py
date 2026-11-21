@@ -16,7 +16,7 @@ from pathlib import Path
 
 import joblib
 
-ARTIFACT_DIR = Path(__file__).resolve().parent / "artifact"
+ARTIFACT_DIR = Path(__file__).resolve().parent / "artifacts"
 CLASSES = ["World", "Sports", "Business", "Sci/Tech"]  # CSV labels 1..4 -> 0..3
 
 

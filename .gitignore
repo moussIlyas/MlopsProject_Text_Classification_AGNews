@@ -8,7 +8,7 @@ venv/
 
 # --- Donnees et sorties generees (vraies copies dans le bucket HF) ---
 /data
-/artifact/
+/artifacts/
 /mlruns/
 /Figures/
 /results/
@@ -16,7 +16,7 @@ venv/
 *.joblib
 *.pt
 *.pkl
-
+/.vscode
 # --- Notebooks : experiences legacy, gardees dans l'historique git ---
 *.ipynb
 .ipynb_checkpoints/

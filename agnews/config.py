@@ -9,7 +9,7 @@ from typing import Any
 import yaml
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
-DEFAULT_CONFIG = PROJECT_ROOT / "config.yaml"
+DEFAULT_CONFIG = PROJECT_ROOT / "config" / "train.yaml"
 SUPPORTED_MODELS = ("logreg",)
 
 

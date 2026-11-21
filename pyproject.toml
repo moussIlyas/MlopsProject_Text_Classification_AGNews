@@ -22,3 +22,8 @@ dependencies = [
 [project.optional-dependencies]
 # Only needed once to bootstrap the dataset; never used in training/Docker
 bootstrap = ["kagglehub>=0.3.0"]
+
+[dependency-groups]
+dev = [
+    "pytest>=9.2.0",
+]

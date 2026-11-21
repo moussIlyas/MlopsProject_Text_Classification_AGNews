@@ -2,7 +2,10 @@
 
 from __future__ import annotations
 
+import datetime
+import importlib.metadata
 import json
+import platform
 import shutil
 from pathlib import Path
 from typing import Any
@@ -56,10 +59,31 @@ class ArtifactWriter:
         plt.savefig(self.directory / self.cfg["artifacts"]["confusion_matrix"], dpi=150)
         plt.close()
 
-        (self.directory / "classification_report.txt").write_text(
-            classification_report(y_true, y_pred, digits=4), encoding="utf-8"
-        )
+        detailed_report = classification_report(y_true, y_pred, digits=4)
+        (self.directory / "classification_report.txt").write_text(detailed_report, encoding="utf-8")
         (self.directory / "metrics.json").write_text(json.dumps(metrics, indent=2), encoding="utf-8")
+
+        run_info = {
+            "date": datetime.datetime.now(datetime.timezone.utc).isoformat(),
+            "config": self.cfg,
+            "versions": self._versions(),
+            "detailed_report": detailed_report,
+            "metrics": metrics,
+        }
+        (self.directory / "run_info.json").write_text(
+            json.dumps(run_info, indent=2, default=str), encoding="utf-8"
+        )
 
         print(f"[artifact] {self.directory}: " + ", ".join(sorted(p.name for p in self.directory.iterdir())))
         return self.directory
+
+    @staticmethod
+    def _versions() -> dict[str, str]:
+        return {
+            "python": platform.python_version(),
+            "scikit-learn": importlib.metadata.version("scikit-learn"),
+            "joblib": importlib.metadata.version("joblib"),
+            "numpy": importlib.metadata.version("numpy"),
+            "pandas": importlib.metadata.version("pandas"),
+            "dvc": importlib.metadata.version("dvc"),
+        }
