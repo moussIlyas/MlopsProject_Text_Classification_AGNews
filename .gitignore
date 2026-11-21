@@ -13,6 +13,9 @@ venv/
 /models/
 /results/
 /resultat/
+
+# Separate microservice, not part of this repo
+/web/
 *.joblib
 *.pt
 *.pkl
