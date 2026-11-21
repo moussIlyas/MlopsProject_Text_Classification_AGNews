@@ -106,6 +106,9 @@ jobs:
           | numpy | {info['versions']['numpy']} |
           | pandas | {info['versions']['pandas']} |
 
+          ### Confusion Matrix
+          ![confusion matrix](./artifacts/confusion_matrix.png)
+
           ### Full details
           See `artifacts/run_info.json` for the complete configuration and classification report.
           """
