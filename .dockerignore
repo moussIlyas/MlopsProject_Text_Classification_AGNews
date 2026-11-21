@@ -10,10 +10,11 @@ __pycache__/
 # Legacy notebooks and their outputs are not part of the training image
 *.ipynb
 Figures/
+models/
 results/
 resultat/
 
 # Mounted at runtime instead
 data/
-artifact/
+artifacts/
 mlruns/

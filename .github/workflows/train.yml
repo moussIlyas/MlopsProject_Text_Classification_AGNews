@@ -66,7 +66,7 @@ jobs:
         run: uv run --group dev python -m pytest tests/ -q
 
       - name: Train and publish artifacts
-        run: uv run python train.py
+        run: uv run train
 
       - name: List local artifacts
         run: ls -lh artifacts/
@@ -115,23 +115,6 @@ jobs:
           Path("report.md").write_text(report)
           PY
           cml comment create report.md
-
-      - name: Build and push packaged model image (Docker Hub)
-        # Option C: model.joblib + artifacts are baked into a versioned image.
-        env:
-          DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
-          DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
-        run: |
-          echo "$DOCKERHUB_TOKEN" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
-          IMAGE="$DOCKERHUB_USERNAME/agnews-model"
-          SHORT="${GITHUB_SHA::12}"
-          docker build --build-context artifacts=artifacts/ -f serve/Dockerfile \
-            -t "$IMAGE:$SHORT" -t "$IMAGE:0.1.0" -t "$IMAGE:latest" .
-          docker run --rm "$IMAGE:$SHORT" "Wall Street stocks rally higher"
-          docker push "$IMAGE:$SHORT"
-          docker push "$IMAGE:0.1.0"
-          docker push "$IMAGE:latest"
-          echo "pushed $IMAGE:$SHORT"
 
       - name: Keep a copy as GitHub artifact (optional backup)
         if: always()

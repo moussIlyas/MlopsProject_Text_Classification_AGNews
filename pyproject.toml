@@ -1,3 +1,7 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
 [project]
 name = "mltp"
 version = "0.1.0"
@@ -5,7 +9,7 @@ description = "AG News: simple reproducible MLOps pipeline (scikit-learn)"
 readme = "README.md"
 requires-python = ">=3.13,<3.14"
 dependencies = [
-    "boto3>=1.43.75",              # upload artifact/ to the HF S3 gateway
+    "boto3>=1.43.75",              # upload artifacts/ to the HF S3 gateway
     "dvc[s3]>=3.67.1",            # data versioning + `dvc pull` in the container
     "joblib>=1.4.0",              # save the fitted sklearn model (model.joblib)
     "matplotlib>=3.9.0",           # confusion_matrix.png
@@ -14,7 +18,7 @@ dependencies = [
     "pandas>=2.2.0",
     "psycopg2-binary>=2.9.13",     # MLflow Postgres driver
     "python-dotenv>=1.2.3",        # read .env locally
-    "pyyaml>=6.0.2",               # config.yaml
+    "pyyaml>=6.0.2",               # config/train.yaml
     "scikit-learn>=1.5.0",         # TF-IDF + LogisticRegression + metrics
     "seaborn>=0.13.0",             # confusion matrix heatmap
 ]
@@ -22,6 +26,17 @@ dependencies = [
 [project.optional-dependencies]
 # Only needed once to bootstrap the dataset; never used in training/Docker
 bootstrap = ["kagglehub>=0.3.0"]
+
+[project.scripts]
+train = "train:main"
+validate-data = "validate_data:validate"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+py-modules = ["train", "validate_data"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
 
 [dependency-groups]
 dev = [

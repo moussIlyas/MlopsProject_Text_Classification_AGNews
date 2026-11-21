@@ -13,7 +13,7 @@ from .config import flatten_config
 
 
 def configure_tracking() -> None:
-    from mlflow_config import configure_mlflow
+    from .mlflow_config import configure_mlflow
 
     configure_mlflow()
 

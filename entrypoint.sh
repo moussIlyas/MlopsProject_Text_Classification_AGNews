@@ -33,5 +33,5 @@ else
     echo "[entrypoint] dataset already present, skipping dvc pull"
 fi
 
-echo "[entrypoint] starting trainer: python train.py $*"
-exec uv run --frozen python train.py "$@"
+echo "[entrypoint] starting trainer: uv run train $*"
+exec uv run --frozen train "$@"
