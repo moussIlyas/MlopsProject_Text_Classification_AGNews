@@ -6,9 +6,8 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
-  issues: write          # CML commit comments
-  pull-requests: write   # CML PR comments (if we add PR triggers later)
+  contents: write          # CML needs write access to post commit comments
+  pull-requests: write     # CML PR comments (if we add PR triggers later)
 
 concurrency:
   group: train-${{ github.ref }}
