@@ -78,6 +78,7 @@ jobs:
       - name: Publish CML report
         env:
           REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CML_WATERMARK: false
         run: |
           python3 - <<'PY'
           import json
