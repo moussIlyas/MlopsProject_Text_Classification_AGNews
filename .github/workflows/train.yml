@@ -71,6 +71,13 @@ jobs:
       - name: List local artifacts
         run: ls -lh artifacts/
 
+      - name: Upload confusion matrix to release assets
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release create cml-assets --title "CML static assets" --notes "" || true
+          gh release upload cml-assets artifacts/confusion_matrix.png --clobber
+
       - name: Setup CML
         uses: iterative/setup-cml@v2
 
@@ -105,6 +112,9 @@ jobs:
           | joblib | {info['versions']['joblib']} |
           | numpy | {info['versions']['numpy']} |
           | pandas | {info['versions']['pandas']} |
+
+          ### Confusion Matrix
+          ![confusion matrix](https://github.com/${{ github.repository }}/releases/download/cml-assets/confusion_matrix.png)
 
           ### Full details
           See `artifacts/run_info.json` for the complete configuration and classification report.
