@@ -107,15 +107,12 @@ jobs:
           | numpy | {info['versions']['numpy']} |
           | pandas | {info['versions']['pandas']} |
 
-          ### Confusion Matrix
-          ![confusion matrix](./artifacts/confusion_matrix.png)
-
           ### Full details
           See `artifacts/run_info.json` for the complete configuration and classification report.
           """
           Path("report.md").write_text(report)
           PY
-          cml comment create report.md
+          cml comment create --watermark=false report.md
 
       - name: Build and push packaged model image (Docker Hub)
         # Option C: model.joblib + artifacts are baked into a versioned image.
