@@ -49,6 +49,11 @@ for arg in "$@"; do
   prev="$arg"
 done
 
+# MLflow 3.18 blocks 0.0.0.0 by default (DNS-rebinding / CORS protection).
+# Allow the addresses we just printed so the browser UI can call its own API.
+ALLOWED_HOSTS="localhost,127.0.0.1,${DISPLAY_HOST},localhost:${DISPLAY_PORT},127.0.0.1:${DISPLAY_PORT},${DISPLAY_HOST}:${DISPLAY_PORT}"
+CORS_ORIGINS="http://localhost:${DISPLAY_PORT},http://127.0.0.1:${DISPLAY_PORT},http://${DISPLAY_HOST}:${DISPLAY_PORT}"
+
 echo "[mlflow_ui] backend: Neon Postgres (URI hidden)"
 echo "[mlflow_ui] experiment: ${EXPERIMENT_NAME:-AG_News_Classification_sklearn}"
 echo "[mlflow_ui] starting UI on http://${DISPLAY_HOST}:${DISPLAY_PORT}"
@@ -58,4 +63,6 @@ exec uv run mlflow server \
   --host "$HOST" \
   --port "$PORT" \
   --serve-artifacts \
-  "$@"
+  "$@" \
+  --allowed-hosts "$ALLOWED_HOSTS" \
+  --cors-allowed-origins "$CORS_ORIGINS"
