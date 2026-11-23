@@ -35,9 +35,23 @@ export MLFLOW_TRACKING_URI="$URI"
 HOST="${MLFLOW_HOST:-0.0.0.0}"
 PORT="${MLFLOW_PORT:-5000}"
 
+# Reflect explicit --host/--port passed through to MLflow in the startup message.
+DISPLAY_HOST="$HOST"
+DISPLAY_PORT="$PORT"
+prev=""
+for arg in "$@"; do
+  case "$prev" in
+    --host) DISPLAY_HOST="$arg" ;;
+    --port) DISPLAY_PORT="$arg" ;;
+  esac
+  [[ "$arg" == --host=* ]] && DISPLAY_HOST="${arg#*=}"
+  [[ "$arg" == --port=* ]] && DISPLAY_PORT="${arg#*=}"
+  prev="$arg"
+done
+
 echo "[mlflow_ui] backend: Neon Postgres (URI hidden)"
 echo "[mlflow_ui] experiment: ${EXPERIMENT_NAME:-AG_News_Classification_sklearn}"
-echo "[mlflow_ui] starting UI on http://${HOST}:${PORT}"
+echo "[mlflow_ui] starting UI on http://${DISPLAY_HOST}:${DISPLAY_PORT}"
 
 exec uv run mlflow server \
   --backend-store-uri "$URI" \

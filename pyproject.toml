@@ -13,7 +13,7 @@ dependencies = [
     "dvc[s3]>=3.67.1",            # data versioning + `dvc pull` in the container
     "joblib>=1.4.0",              # save the fitted sklearn model (model.joblib)
     "matplotlib>=3.9.0",           # confusion_matrix.png
-    "mlflow>=3.16.1",              # tracking (metadata -> Neon, artifacts -> HF)
+    "mlflow==3.18.0",              # tracking (metadata -> Neon, artifacts -> HF)
     "numpy>=2.0.0",
     "pandas>=2.2.0",
     "psycopg2-binary>=2.9.13",     # MLflow Postgres driver
